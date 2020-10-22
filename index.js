@@ -29,6 +29,16 @@ client.on('message', msg => {
   else if(msg.content.startsWith(`${prefix}beep`)){
     msg.channel.send('Boop.');
   }
+  else if(command === 'kick'){
+    //grab the "first" mentioned user from the message
+    // this will return a `user` object, just like `msg.author`
+    //however, needs coherence check in case no user is mentioned
+    if(!msg.mentions.users.size){
+      return msg.reply('You need to tag a user in order to kick them!');
+    }
+    const taggedUser = msg.mentions.users.first();
+    msg.channel.send(`You wanted to kick: ${taggedUser.username}`)
+  }
 });
 
 client.login(token);
