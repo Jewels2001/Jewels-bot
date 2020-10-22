@@ -1,4 +1,6 @@
 //Basic greeter-bot code to be edited
+//we likely want to use package discord.js instead of discord.io
+
 
 var Discord = require('discord.io');
 var logger = require('winston');
