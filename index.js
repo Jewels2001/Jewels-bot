@@ -7,26 +7,26 @@ const client = new Discord.Client();
 
 
 client.once('ready', () => {
-  console.log('Logged in as ${client.user.tag}!');
+  console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on('message', msg => {
   //event listeners callback function
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
   //If does not start with prefix OR sent by a bot, exit.
-  const args = message.content.slice(prefix.length).trim().split(' ');
+  const args = msg.content.slice(prefix.length).trim().split(' ');
   //Slices off prefix, removes whitespace, splits into array by spaces
   const command = args.shift().toLowerCase();
   //Takes first element in array and removes it.
 //***********************************************
-  if (msg.content === '${prefix}ping') {
+  if (msg.content === `${prefix}ping`) {
     msg.reply('pong');
     msg.channel.send('polo?');
   }
   else if (msg.content.startsWith(`${prefix}Marco`)){
     msg.channel.send('Polo!');
   }
-  else if(msg.content.startsWith('${prefix}beep')){
+  else if(msg.content.startsWith(`${prefix}beep`)){
     msg.channel.send('Boop.');
   }
 });
