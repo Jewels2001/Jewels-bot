@@ -2,6 +2,7 @@
 
 const Discord = require("discord.js");
 const { prefix, token } = require("./config.json");
+
 const client = new Discord.Client();
 
 
@@ -21,7 +22,6 @@ client.on('message', msg => {
 //***********************************************
   if (msg.content === `${prefix}ping`) {
     msg.reply('pong');
-    msg.channel.send('polo?');
   }
   else if (msg.content.startsWith(`${prefix}Marco`)){
     msg.channel.send('Polo!');
