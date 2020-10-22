@@ -6,7 +6,6 @@
   "author": "Jewels2001",
   "license":,
   "dependencies": {
-    "discord.io": "^2.5.3",
     "discord.js": "^12.4.0"
   }
 }
