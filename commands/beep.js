@@ -1,7 +1,7 @@
 module.exports = {
-	name: 'Beep.js',
+	name: 'Beep',
 	description: 'When a user types beep, the bot will reply boop.',
-	execute(message) {
+	execute(message, args) {
 		message.channel.send(`Boop.`);
 	},
 };
