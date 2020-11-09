@@ -1,6 +1,8 @@
 module.exports = {
 	name: 'Boop',
 	description: 'Tag a member and boop them (but not really).',
+	args: true,
+	guildOnly: true,
 	execute(message, args) {
 		//grab the "first" mentioned user from the message
     // this will return a `user` object, just like `msg.author`
