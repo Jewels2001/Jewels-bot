@@ -29,39 +29,24 @@ client.on('message', msg => {
   const command = args.shift().toLowerCase();
   //Takes first element in array and removes it.
 //***********************************************
-  //if (msg.content === `${prefix}ping`) {
-  if(command === 'ping'){
+  /*if (msg.content === `${prefix}ping`) {
+  //if(command === 'ping'){
     //msg.reply('pong');
     //msg.channel.send('pong');
-    client.commands.get('ping').execute(msg, args);
+    //client.commands.get('ping').execute(msg, args);
   }
   //else if (msg.content.startsWith(`${prefix}Marco`)){
   else if (command === 'Marco'){
     //msg.channel.send('Polo!');
     client.commands.get('marco').execute(msg, args);
-  }
-  else if(command === 'beep'){
-    client.commands.get('beep').execute(msg, args);
-  }
-  else if(msg.content === `${prefix}server`){
-    client.commands.get('server').execute(msg);
-  }
-  else if(msg.content === `${prefix}user-info`){
-    client.commands.get('user-info').execute(msg);
-  }
-  else if(command === 'args-info'){
-    client.commands.get('args-info').execute(msg, args);
+  }*/
+  if (!client.commands.has(command)) return;
 
-    //msg.channel.send(`Command name: ${command}\nArguments: ${args}`);
-  }
-  else if(command === 'boop'){
-    //grab the "first" mentioned user from the message
-    // this will return a `user` object, just like `msg.author`
-    //however, needs coherence check in case no user is mentioned
-    client.commands.get('boop').execute(msg, args);
-  }
-  else if(command === 'avatar'){
-    client.commands,get('avatar').execute(msg);
+  try {
+    client.commands.get(command).execute(msg, args);
+  } catch (error) {
+    console.error(error);
+    msg.reply('There was an error trying to execute that command!');
   }
 });
 
