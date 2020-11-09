@@ -22,9 +22,9 @@ client.once('ready', () => {
 
 client.on('message', msg => {
   //event listeners callback function
-//  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
   //If does not start with prefix OR sent by a bot, exit.
-  const args = msg.content.slice(prefix.length).trim().split(/ +/);
+  const args = msg.content.slice(prefix.length).trim().split(' ');
   //Slices off prefix, removes whitespace, splits into array by spaces
   const command = args.shift().toLowerCase();
   //Takes first element in array and removes it.
@@ -33,13 +33,28 @@ client.on('message', msg => {
   if(command === 'ping'){
     //msg.reply('pong');
     //msg.channel.send('pong');
-    client.commands.get('ping').execute(message, args);
+    client.commands.get('ping').execute(msg, args);
   }
-  else if (msg.content.startsWith(`${prefix}Marco`)){
-    msg.channel.send('Polo!');
+  //else if (msg.content.startsWith(`${prefix}Marco`)){
+  else if (command === 'Marco'){
+    //msg.channel.send('Polo!');
+    client.commands.get('marco').execute(msg, args);
   }
-  else if(msg.content.startsWith(`${prefix}beep`)){
-    msg.channel.send('Boop.');
+  else if(command === 'beep'){
+    client.commands.get('beep').execute(msg, args);
+  }
+  else if(msg.content === `${prefix}server`){
+    msg.channel.send(`This server's name is: ${msg.guild.name}\n`);
+    msg.channel.send(`Total members: ${msg.guild.memberCount}`);
+  }
+  else if(msg.content === `${prefix}user-info`){
+    msg.channel.send(`Username: ${msg.author.username}\nID: ${msg.author.id}`);
+  }
+  else if(command === 'args=info'){
+    if(!args.length){
+      return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`)
+    }
+    msg.channel.send(`Command name: ${command}\nArguments: ${args}`);
   }
   else if(command === 'boop'){
     //grab the "first" mentioned user from the message
@@ -50,6 +65,18 @@ client.on('message', msg => {
     }
     const taggedUser = msg.mentions.users.first();
     msg.channel.send(`You wanted to boop: ${taggedUser.username}`)
+  }
+  else if(command === 'avatar' ){
+    if(!msg.mentions.users.size){
+      return msg.channel.send(`Your avatar: <${msg.author.displayAvatarURL({ format: "png", dynamic: true})}>`);
+    }
+
+    const avatarList = msg.mentions.users.map(user => {
+      return `${user.username}'s avatar: <${user.displayAvatarURL({ format: "png", dynamic: true})}>`;
+    });
+    //send the entire array of strings as a message
+    //by default, discord.js will `.join()` the array with `\n`
+    msg.channel.send(avatarList);
   }
 });
 
