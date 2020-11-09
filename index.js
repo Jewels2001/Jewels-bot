@@ -44,11 +44,10 @@ client.on('message', msg => {
     client.commands.get('beep').execute(msg, args);
   }
   else if(msg.content === `${prefix}server`){
-    msg.channel.send(`This server's name is: ${msg.guild.name}\n`);
-    msg.channel.send(`Total members: ${msg.guild.memberCount}`);
+    client.commands.get('server').execute(msg);
   }
   else if(msg.content === `${prefix}user-info`){
-    msg.channel.send(`Username: ${msg.author.username}\nID: ${msg.author.id}`);
+    client.commands.get('user-info').execute(msg);
   }
   else if(command === 'args-info'){
     client.commands.get('args-info').execute(msg, args);
