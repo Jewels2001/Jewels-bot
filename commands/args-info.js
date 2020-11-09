@@ -5,7 +5,7 @@ module.exports = {
 		if(!args.length){
       return message.channel.send(`You didn't provide any argumemts, ${message.author}!`);
     }
-    else i(args[0] === 'foo'){
+    else if(args[0] === 'foo'){
       return message.channel.send('bar');
     }
 
