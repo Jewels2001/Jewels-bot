@@ -1,5 +1,6 @@
 module.exports = {
 	name: 'ping',
+	aliases: ['Ping', 'Ping!', 'ping!'],
 	description: 'Ping!',
 	args: true,
 	cooldown: 5,

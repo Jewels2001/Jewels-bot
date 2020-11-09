@@ -41,9 +41,14 @@ client.on('message', msg => {
     //msg.channel.send('Polo!');
     client.commands.get('marco').execute(msg, args);
   }*/
-  if (!client.commands.has(commandName)) return;
+  //if (!client.commands.has(commandName)) return;
 
-  const command = client.commands.get(commandName);
+  //const command = client.commands.get(commandName);
+  const command = client.command.get(commandName)
+    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+
+  if(!command) return;
+
 //Checks if the command is guildOnly (not usable in DMs)
   if(command.guildOnly && msg.channel.type === 'dm'){
     return msg.reply('I can\'t execute that command inside DMs!');
