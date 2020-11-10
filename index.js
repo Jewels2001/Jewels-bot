@@ -5,7 +5,6 @@ const { prefix, token } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-const cooldowns = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -16,6 +15,7 @@ for (const file of commandFiles){
   client.commands.set(command.name, command);
 }
 
+const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -44,7 +44,7 @@ client.on('message', msg => {
   //if (!client.commands.has(commandName)) return;
 
   //const command = client.commands.get(commandName);
-  const command = client.command.get(commandName)
+  const command = client.commands.get(commandName)
     || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
   if(!command) return;
@@ -54,7 +54,7 @@ client.on('message', msg => {
     return msg.reply('I can\'t execute that command inside DMs!');
   }
 //Checks if there are arguments being passed and if they meet requirements
-  if(commands.args && !args.length){
+  if(command.args && !args.length){
     //return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
     let reply = `You didn't provide any arguments, ${msg.author}!`;
 
@@ -65,8 +65,8 @@ client.on('message', msg => {
     return msg.channel.send(reply);
   }
 //Checks if the command has a cooldown set
-  if(!cooldowns.has(commands.name)){
-    cooldowns.set(command.name, new DiscordCollection());
+  if(!cooldowns.has(command.name)){
+    cooldowns.set(command.name, new Discord.Collection());
   }
   const now = Date.now();
   const timestamps = cooldowns.get(command.name);
