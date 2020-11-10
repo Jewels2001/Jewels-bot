@@ -23,6 +23,7 @@ module.exports = {
 	aliases: ['Boop', 'Boop!', 'boop!'],
 	description: 'Tag a member and boop them',
 	args: true,
+	usage: '<user>'
 	cooldown: 5,
 	execute(message, args) {
 		if (!message.mentions.users.size) {
