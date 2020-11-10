@@ -19,6 +19,12 @@ const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  //*******Bot Configuration*******
+  //client.user.setActivity('pondering life');
+  //client.user.setStatus('idle');
+  client.user.setPresence({ activity: { name: 'pondering life' }, status: 'idle' });
+  //*******************************
+
 });
 
 client.on('message', msg => {
