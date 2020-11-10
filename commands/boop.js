@@ -21,7 +21,7 @@
 module.exports = {
 	name: 'boop',
 	aliases: ['Boop', 'Boop!', 'boop!'],
-	description: 'Boop!',
+	description: 'Tag a member and boop them',
 	args: true,
 	cooldown: 5,
 	execute(message, args) {
