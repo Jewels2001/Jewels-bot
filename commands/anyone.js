@@ -12,7 +12,6 @@ client.login('myTokenID');
 module.exports = {
 	name: 'anyone',
 	description: 'Pings one random person in the server when called.',
-	args: true,
 	execute(message, args) {
 
     //let onlineUsers = client.fetchMembers().array();

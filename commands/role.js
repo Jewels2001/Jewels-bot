@@ -4,6 +4,6 @@ module.exports = {
 	args: true,
   usage: '<user> <role>',
 	execute(message, args) {
-		message.channel.send('role');
+		message.channel.send('Pong.');
 	},
 };

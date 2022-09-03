@@ -6,7 +6,7 @@ const { prefix, token } = require('./config.json');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-const guild = new Discord.Guild();
+
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -22,12 +22,12 @@ const cooldowns = new Discord.Collection();
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   //*******Bot Configuration*******
-  //client.user.setActivity('pondering life');
   //client.user.setStatus('idle');
-  client.user.setPresence({ activity: { name: 'pondering life' }, status: 'idle' });
+  client.user.setPresence({ activity: { name: 'pondering life'/*, type: "PLAYING"*/ }, status: 'idle' });
   //*******************************
-
 });
+
+
 
 client.on('message', msg => {
   //event listeners callback function

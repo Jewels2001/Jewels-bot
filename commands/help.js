@@ -7,6 +7,9 @@ module.exports = {
 	usage: '[command name]',
 	cooldown: 5,
 	execute(msg, args) {
+		const data = [];
+		const { commands } = msg.client;
+
 		if(!args.length){
       data.push('Here\'s a list of all my commands:');
       data.push(commands.map(command => command.name).join(', '));
@@ -19,11 +22,11 @@ module.exports = {
         })
         .catch(error => {
           console.error(`Could not send help DM to ${msg.author.tag}.\n`, error);
-          msg.reply('Is eems like I can\'t DM you! Do you have DMs enabled?');
+          msg.reply('It seems like I can\'t DM you! Do you have DMs enabled?');
         });
     }
     const name = args[0].toLowerCase();
-    const command = commands.get(name) || command.find(c => c.aliases && c.aliases.includes(name));
+    const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
     if(!command){
       return msg.reply('that\'s not a valid command!');
