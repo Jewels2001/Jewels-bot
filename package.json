@@ -5,6 +5,6 @@
   "main": "index.js",
   "author": "Jewels2001",
   "dependencies": {
-    "discord.js": "^12.4.0"
+    "discord.js": "^14.13.0"
   }
 }

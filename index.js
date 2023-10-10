@@ -1,104 +1,74 @@
-//Good copy of index.js / what we want the bot to do
-const fs = require('fs');
-const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const fs = require('node:fs');
+const path = require('node:path');
+// Require necessary discord.js classes
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { token } = require('./config.json');
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+// Create a new client instance
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-const guild = new Discord.Guild();
+// Dynamically retrieve commands and store in collection
+client.commands = new Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles){
-  const command = require(`./commands/${file}`);
-  //set a new item in the Collection w/ the key as command name and
-  //the value as the exported module
-  client.commands.set(command.name, command);
+const commandsPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(commandsPath);
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+//read all files in regular folder
+for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+    // Set a new item in Collection w/ key = command name, value = exported module
+    if ('data' in command && 'execute' in command) {
+        client.commands.set(command.data.name, command);
+    } else {
+        console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+    }
+}
+// read all files in sub folders
+for (const folder of commandFolders) {
+    const commandsPath1 = path.join(commandsPath, folder);
+    const commandFiles = fs.readdirSync(commandsPath1).filter(file => file.endsWith('.js'));
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath1, file);
+        const command = require(filePath);
+        // Set a new item in Collection w/ key = command name, value = exported module
+        if ('data' in command && 'execute' in command) {
+            client.commands.set(command.data.name, command);
+        } else {
+            console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+        }
+    }
 }
 
-const cooldowns = new Discord.Collection();
-
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  //*******Bot Configuration*******
-  //client.user.setActivity('pondering life');
-  //client.user.setStatus('idle');
-  client.user.setPresence({ activity: { name: 'pondering life' }, status: 'idle' });
-  //*******************************
-
+// When client is ready, run this code once
+// c is event parameter 
+client.once(Events.ClientReady, c => {
+    console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
-client.on('message', msg => {
-  //event listeners callback function
-  if (!msg.content.startsWith(prefix) || msg.author.bot) return;
-  //If does not start with prefix OR sent by a bot, exit.
-  const args = msg.content.slice(prefix.length).trim().split(/ +/);
-  //Slices off prefix, removes whitespace, splits into array by spaces
-  const commandName = args.shift().toLowerCase();
-  //Takes first element in array and removes it.
-//***********************************************
-  /*if (msg.content === `${prefix}ping`) {
-  //if(command === 'ping'){
-    //msg.reply('pong');
-    //msg.channel.send('pong');
-    //client.commands.get('ping').execute(msg, args);
-  }
-  //else if (msg.content.startsWith(`${prefix}Marco`)){
-  else if (command === 'Marco'){
-    //msg.channel.send('Polo!');
-    client.commands.get('marco').execute(msg, args);
-  }*/
-  //if (!client.commands.has(commandName)) return;
+// Responding to command when receiving an interaction
+client.on(Events.InteractionCreate, async interaction => {
+    if(!interaction.isChatInputCommand()) return;
 
-  //const command = client.commands.get(commandName);
-  const command = client.commands.get(commandName)
-    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    const command = interaction.client.commands.get(interaction.commandName);
 
-  if(!command) return;
-
-//Checks if the command is guildOnly (not usable in DMs)
-  if(command.guildOnly && msg.channel.type === 'dm'){
-    return msg.reply('I can\'t execute that command inside DMs!');
-  }
-//Checks if there are arguments being passed and if they meet requirements
-  if(command.args && !args.length){
-    //return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
-    let reply = `You didn't provide any arguments, ${msg.author}!`;
-
-    if(command.usage){
-      reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+    if(!command) {
+        console.error(`No command matching ${interaction.commandName} found.`);
+        return;
     }
-
-    return msg.channel.send(reply);
-  }
-//Checks if the command has a cooldown set
-  if(!cooldowns.has(command.name)){
-    cooldowns.set(command.name, new Discord.Collection());
-  }
-  const now = Date.now();
-  const timestamps = cooldowns.get(command.name);
-  const cooldownAmount = (command.cooldown || 3) * 1000;
-
-  if(timestamps.has(msg.author.id)){
-    const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
-
-    if(now < expirationTime){
-      const timeLeft = (expirationTime - now) / 1000;
-      return msg.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing \`${command.name}\` .`);
+    try {
+        await command.execute(interaction);
+    } catch(error) {
+        console.error(error);
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ content: 'There was an error trying to execute that command!', ephemeral: true});
+        } else {
+            await interaction.reply({ content: 'There was an error trying to execute that command!', ephemeral: true });
+        }
     }
-  }
-  timestamps.set(msg.author.id, now);
-  setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
-
-//tries command, else outputs error
-  try {
-    //client.commands.get(command).execute(msg, args);
-    command.execute(msg, args);
-  } catch (error) {
-    console.error(error);
-    msg.reply('There was an error trying to execute that command!');
-  }
+    console.log(interaction);
 });
 
+
+// Log in with client's token
 client.login(token);
